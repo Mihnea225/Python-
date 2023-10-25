@@ -1,0 +1,55 @@
+from email.message import EmailMessage
+from email.mime.application import MIMEApplication
+import smtplib
+import ssl
+import time
+
+def send_daily_email():
+    email_sender = '.....@gmail.com'
+    email_password = '**** **** **** ****'  
+
+    # Lista destinatarilor
+    destinatari = ('.....@gmail.com', '.....@gmail.com', '.....@gmail.com')
+
+    subject = ''
+    body = """
+     
+    """
+
+    em = EmailMessage()
+    em['From'] = email_sender
+
+    # Adaugăm destinatarii în câmpul "Bcc" pentru a-i ține invizibili între ei
+    em['Bcc'] = ','.join(destinatari)
+
+    em['Subject'] = subject
+    em.set_content(body)
+
+    # Atașăm CV-ul
+    cv_file = '...'  # Schimbă cu numele și calea fișierului CV-ului tău
+    with open(cv_file, 'rb') as cv:
+        cv_data = cv.read()
+        cv_mime = MIMEApplication(cv_data)
+        cv_mime.add_header('Content-Disposition', 'attachment', filename='...') # adauga aici numele documentului fara cale
+        em.add_attachment(cv_mime)
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(email_sender, email_password)
+        smtp.sendmail(email_sender, destinatari, em.as_string())
+
+
+# Setăm ora și minutele la care să trimită e-mailul zilnic (de exemplu, 8:30 dimineața)
+send_hour = 8
+send_minute = 30
+
+while True:
+    current_time = time.localtime()
+
+    if current_time.tm_hour == send_hour and current_time.tm_min == send_minute:
+        # Trimiterea e-mailului la ora și minutul specificate
+        send_daily_email()
+
+    # Așteptăm 1 minut înainte de a verifica din nou
+    time.sleep(60)
