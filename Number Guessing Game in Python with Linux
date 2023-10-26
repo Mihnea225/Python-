@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+import random
+
+# Game setup
+class Game:
+    def __init__(self):
+        self.player = Player()
+        self.deck = Deck()
+
+    def start(self):
+        print("\nWelcome to the Number Guessing Game!")
+        print("Guess a number between 1 and 100. You have 7 tries.\n")
+
+        self.deck.shuffle()
+        self.player.reset()
+
+        while not self.player.is_game_over():
+            self.player.play_turn(self.deck.deal_card())
+
+        if self.player.is_winner():
+            print(f"\nCongratulations! You guessed the correct number, {self.player.guess}, in {self.player.tries} tries.")
+        else:
+            print("\nYou've run out of turns. Game over.\n")
+
+
+# Player class
+class Player:
+    def __init__(self):
+        self.tries = 0
+        self.guess = None
+        self.max_tries = 7
+
+    def reset(self):
+        self.tries = 0
+        self.guess = None
+
+    def is_game_over(self):
+        return self.tries >= self.max_tries
+
+    def is_winner(self):
+        return self.guess == self.player.guess
+
+    def play_turn(self, card):
+        self.tries += 1
+        self.guess = card.number
+
+        if self.guess == self.player.guess:
+            print(f"\nCongratulations! You guessed the correct number, {self.player.guess}, in {self.player.tries} tries.")
+        elif self.guess > self.player.guess:
+            print("\nToo high! Guess again.")
+        else:
+            print("\nToo low! Guess again.")
+
+
+# Card class
+class Card:
+    def __init__(self, number):
+        self.number = number
+
+
+# Deck class
